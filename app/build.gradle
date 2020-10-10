@@ -1,0 +1,127 @@
+import com.buildsrc.App
+import com.buildsrc.Versions
+import com.buildsrc.Deps
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'com.google.protobuf'
+apply from: "../ktlint.gradle"
+
+android {
+    compileSdkVersion Versions.compileSdk
+    buildToolsVersion Versions.buildTool
+
+    defaultConfig {
+        applicationId App.applicationId
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        versionCode App.versionCode
+        versionName App.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        useIR = true
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion Deps.AndroidX.Compose.version
+        kotlinCompilerVersion Deps.Kotlin.compilerVersion
+    }
+}
+
+dependencies {
+    implementation Deps.Kotlin.stdLib
+    implementation Deps.AndroidX.coreKtx
+    implementation Deps.AndroidX.appcompat
+    implementation Deps.AndroidX.activityKtx
+    implementation Deps.AndroidX.material
+
+    // Compose
+    implementation Deps.AndroidX.Compose.ui
+    implementation Deps.AndroidX.Compose.runtime
+    implementation Deps.AndroidX.Compose.foundation
+    implementation Deps.AndroidX.Compose.material
+    // implementation Deps.AndroidX.Compose.composer
+    implementation Deps.AndroidX.Compose.tooling
+    implementation Deps.AndroidX.Compose.savedInstanceState
+    implementation Deps.AndroidX.Compose.animationCore
+    implementation Deps.AndroidX.Compose.animation
+    implementation Deps.AndroidX.Compose.liveDataRuntime
+
+    // Microsoft Duo
+    implementation Deps.MicrosoftDuo.duoCore
+    implementation Deps.MicrosoftDuo.duoLayout
+
+    // Coil image for Compose
+    implementation Deps.AndroidX.Accompanist.accompanistCoil
+
+    // ViewModel
+    implementation Deps.AndroidX.Lifecycle.viewModelKtx
+    implementation Deps.AndroidX.Lifecycle.runtimeKtx
+
+    // LiveData
+    implementation Deps.AndroidX.LiveData.liveDataKtx
+
+    // Hilt
+    implementation Deps.Hilt.hiltAndroid
+    kapt Deps.Hilt.kapt
+    implementation Deps.HiltAndroid.viewModel
+    kapt Deps.HiltAndroid.kapt
+
+    // Protocol Buffer
+    implementation Deps.ProtocolBuffer.protocolBufferLite
+
+    // Data Store
+    implementation Deps.AndroidX.DataStore.protoDataStore
+    implementation Deps.AndroidX.DataStore.preferenceDataStore
+}
+
+kapt {
+    correctErrorTypes true
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs += ["-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check"]
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = Deps.ProtocolBuffer.protocolBuffer
+    }
+
+    // Generates the java Protobuf-lite code for the Protobufs in this project. See
+    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+    // for more information.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}

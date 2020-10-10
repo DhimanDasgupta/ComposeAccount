@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_package = "com.dhimandasgupta.composeaccount";
+option java_multiple_files = true;
+
+message AccountPreferences {
+  // for profile picture
+  string profile_image_local_file_path = 1;
+  // for name
+  string name = 2;
+  // for phone number
+  string phone_number = 3;
+  // for id
+  string id = 4;
+  // for github link
+  string github_link = 5;
+  // for email
+  string email = 6;
+  // for async toggle
+  bool async_toggle = 7;
+  // for sync toggle
+  bool sync_toggle = 8;
+}
