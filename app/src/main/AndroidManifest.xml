@@ -20,9 +20,9 @@
         <package android:name="com.twitter.android" />
         <!-- Since we want to open Twitter Lite application if available -->
         <package android:name="com.twitter.android.lite" />
-        <!-- Since we want to open Twitter Lite application if available -->
+        <!-- Since we want to open Instagram application if available -->
         <package android:name="com.instagram.android" />
-        <!-- Since we want to open Twitter Lite application if available -->
+        <!-- Since we want to open Youtube application if available -->
         <package android:name="com.google.android.youtube" />
         <!-- For Opening URLs in an external browser like Chrome -->
         <intent>
@@ -37,7 +37,7 @@
     </queries>
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:name=".app.ComposeAccountApp"
