@@ -18,11 +18,11 @@ private const val ACCOUNT_LINK_TWITTER = "ACCOUNT_LINK_TWITTER"
 private const val ACCOUNT_LINK_INSTAGRAM = "ACCOUNT_LINK_INSTAGRAM"
 private const val ACCOUNT_LINK_YOUTUBE = "ACCOUNT_LINK_YOUTUBE"
 
-fun AccountPreferences.toFullAccountProfile() = AllAccountItems(
+fun AccountPreferences?.toFullAccountProfile(locationGranted: Boolean = false) = AllAccountItems(
     accountItems = listOf(
         AccountProfileImage(
             id = ACCOUNT_PROFILE_IMAGE.hashCode(),
-            profileImage = profileImageLocalFilePath,
+            profileImage = this?.profileImageLocalFilePath ?: "",
         ),
         AccountHeading(
             id = ACCOUNT_HEADING_CONTACTS.hashCode(),
@@ -31,17 +31,17 @@ fun AccountPreferences.toFullAccountProfile() = AllAccountItems(
         AccountProfileText(
             id = ACCOUNT_TEXT_NAME.hashCode(),
             label = "Profile Name",
-            value = name,
+            value = this?.name ?: "----",
         ),
         AccountProfileText(
             id = ACCOUNT_TEXT_EMAIL.hashCode(),
             label = "Email",
-            value = email,
+            value = this?.email ?: "----",
         ),
         AccountProfileText(
             id = ACCOUNT_TEXT_NUMBER.hashCode(),
             label = "Profile Number",
-            value = phoneNumber,
+            value = this?.phoneNumber ?: "----",
         ),
         AccountHeading(
             id = ACCOUNT_HEADING_TOGGLES.hashCode(),
@@ -51,19 +51,19 @@ fun AccountPreferences.toFullAccountProfile() = AllAccountItems(
             id = ACCOUNT_SWITCH_PRIVACY.hashCode(),
             label = "Some Async Operation",
             detailsLabel = "On changing the switch it dose some async operation so the change will not be immediate",
-            switchValue = asyncToggle
+            switchValue = this?.asyncToggle ?: false
         ),
         AccountProfileSwitch(
             id = ACCOUNT_SWITCH_LOCATION.hashCode(),
             label = "Indicates some toggle",
             detailsLabel = "This switch's value depends on some external conditions and this is not toggleable",
-            switchValue = true
+            switchValue = locationGranted
         ),
         AccountProfileSwitch(
             id = ACCOUNT_SWITCH_DATA_USAGE.hashCode(),
             label = "Some sync Operation",
             detailsLabel = "On changing the switch it dose some sync operation so the change will be immediate",
-            switchValue = syncToggle
+            switchValue = this?.syncToggle ?: false
         ),
         AccountHeading(
             id = ACCOUNT_HEADING_LINKS.hashCode(),
@@ -72,7 +72,7 @@ fun AccountPreferences.toFullAccountProfile() = AllAccountItems(
         AccountProfileLink(
             id = ACCOUNT_LINK_GITHUB.hashCode(),
             label = "Github",
-            url = githubLink
+            url = this?.githubLink ?: ""
         ),
         AccountProfileLink(
             id = ACCOUNT_LINK_FB.hashCode(),

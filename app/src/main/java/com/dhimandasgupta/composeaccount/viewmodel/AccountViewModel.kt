@@ -1,30 +1,67 @@
 package com.dhimandasgupta.composeaccount.viewmodel
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.dhimandasgupta.composeaccount.data.AccountPreferencesRepository
+import com.dhimandasgupta.composeaccount.ui.data.AllAccountItems
+import com.dhimandasgupta.composeaccount.ui.data.defaultAllAccountItems
 import com.dhimandasgupta.composeaccount.ui.data.toFullAccountProfile
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class AccountViewModel @ViewModelInject constructor(
     private val accountPreferencesRepository: AccountPreferencesRepository
 ) : ViewModel() {
-    val allAccountItems = accountPreferencesRepository
+    // Source One
+    private val allAccountItemsFromRepository = accountPreferencesRepository
         .getAccountPreferences()
-        .map { accountPreferences ->
-            accountPreferences.toFullAccountProfile()
-        }
+        .onStart { delay(2_000) }
         .asLiveData(viewModelScope.coroutineContext)
 
+    // Source Two
+    private val locationLiveData = MutableLiveData(false)
+
+    // Merged private mutable source
+    private val allAccountItemsMediatorLiveData = MediatorLiveData<AllAccountItems>().also {
+        it.value = defaultAllAccountItems()
+    }
+
+    // Merged public immutable source
+    val allAccountItems: LiveData<AllAccountItems> = allAccountItemsMediatorLiveData
+
     init {
+        allAccountItemsMediatorLiveData.addSource(allAccountItemsFromRepository) {
+            mergeLiveDatumToGenerateFinalUIModel()
+        }
+        allAccountItemsMediatorLiveData.addSource(locationLiveData) {
+            mergeLiveDatumToGenerateFinalUIModel()
+        }
+
         viewModelScope.launch {
             delay(5_000)
             setName("Dhiman Dasgupta")
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        allAccountItemsMediatorLiveData.removeSource(allAccountItemsFromRepository)
+        allAccountItemsMediatorLiveData.removeSource(locationLiveData)
+    }
+
+    private fun mergeLiveDatumToGenerateFinalUIModel() {
+        val finaleUIModel = allAccountItemsFromRepository.value?.toFullAccountProfile(locationLiveData.value ?: false)
+        allAccountItemsMediatorLiveData.postValue(finaleUIModel)
+    }
+
+    fun setLocationGranted(granted: Boolean) {
+        locationLiveData.postValue(granted)
     }
 
     fun setProfileImagePath(filePath: String) = viewModelScope.launch {

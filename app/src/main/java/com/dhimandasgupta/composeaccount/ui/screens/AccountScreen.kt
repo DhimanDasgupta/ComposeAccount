@@ -1,7 +1,6 @@
 package com.dhimandasgupta.composeaccount.ui.screens
 
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import android.widget.Toast
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.Icons
@@ -63,6 +63,7 @@ fun AccountRoot(
     onCameraClicked: () -> Unit,
     onGalleryClicked: () -> Unit,
     onDeletePhoto: () -> Unit,
+    onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit
 ) {
     val accountState = accountViewModel.allAccountItems.observeAsState(defaultAllAccountItems())
@@ -74,14 +75,20 @@ fun AccountRoot(
                 .fillMaxSize()
         ) {
             CreateToolbar()
-            CreateAccountList(
-                allAccountItems = accountState.value,
-                accountViewModel = accountViewModel,
-                onCameraClicked = onCameraClicked,
-                onGalleryClicked = onGalleryClicked,
-                onDeletePhoto = onDeletePhoto,
-                onRequestToOpenBrowser = onRequestToOpenBrowser,
-            )
+
+            if (accountState.value != null) {
+                CreateAccountList(
+                    allAccountItems = accountState.value,
+                    accountViewModel = accountViewModel,
+                    onCameraClicked = onCameraClicked,
+                    onGalleryClicked = onGalleryClicked,
+                    onDeletePhoto = onDeletePhoto,
+                    onLocationRequested = onLocationRequested,
+                    onRequestToOpenBrowser = onRequestToOpenBrowser,
+                )
+            } else {
+                CreateLoading()
+            }
         }
     }
 }
@@ -105,12 +112,25 @@ fun CreateToolbar() {
 }
 
 @Composable
+fun CreateLoading() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        alignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colors.onSurface
+        )
+    }
+}
+
+@Composable
 fun CreateAccountList(
     allAccountItems: AllAccountItems,
     accountViewModel: AccountViewModel,
     onCameraClicked: () -> Unit,
     onGalleryClicked: () -> Unit,
     onDeletePhoto: () -> Unit,
+    onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
     when (ConfigurationAmbient.current.orientation) {
@@ -120,6 +140,7 @@ fun CreateAccountList(
             onCameraClicked = onCameraClicked,
             onGalleryClicked = onGalleryClicked,
             onDeletePhoto = onDeletePhoto,
+            onLocationRequested = onLocationRequested,
             onRequestToOpenBrowser = onRequestToOpenBrowser,
         )
         else -> CreateAccountListForPortrait(
@@ -128,6 +149,7 @@ fun CreateAccountList(
             onCameraClicked = onCameraClicked,
             onGalleryClicked = onGalleryClicked,
             onDeletePhoto = onDeletePhoto,
+            onLocationRequested = onLocationRequested,
             onRequestToOpenBrowser = onRequestToOpenBrowser,
         )
     }
@@ -140,6 +162,7 @@ fun CreateAccountListForPortrait(
     onCameraClicked: () -> Unit,
     onGalleryClicked: () -> Unit,
     onDeletePhoto: () -> Unit,
+    onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
     LazyColumnFor(items = allAccountItems.accountItems) {
@@ -155,7 +178,8 @@ fun CreateAccountListForPortrait(
             is AccountProfileText -> CreateAccountProfileText(accountProfileText = it)
             is AccountProfileSwitch -> CreateAccountProfileSwitch(
                 accountProfileSwitch = it,
-                accountViewModel = accountViewModel
+                accountViewModel = accountViewModel,
+                onLocationRequested = onLocationRequested,
             )
             is AccountProfileLink -> CreateAccountProfileLink(
                 accountProfileLink = it,
@@ -172,6 +196,7 @@ fun CreateAccountListForLandscape(
     onCameraClicked: () -> Unit,
     onGalleryClicked: () -> Unit,
     onDeletePhoto: () -> Unit,
+    onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
     val firstItemIsProfileImage = allAccountItems.accountItems.isNotEmpty() && allAccountItems.accountItems[0] is AccountProfileImage
@@ -194,7 +219,8 @@ fun CreateAccountListForLandscape(
                     is AccountProfileText -> CreateAccountProfileText(accountProfileText = it)
                     is AccountProfileSwitch -> CreateAccountProfileSwitch(
                         accountProfileSwitch = it,
-                        accountViewModel = accountViewModel
+                        accountViewModel = accountViewModel,
+                        onLocationRequested = onLocationRequested,
                     )
                     is AccountProfileLink -> CreateAccountProfileLink(
                         accountProfileLink = it,
@@ -211,6 +237,7 @@ fun CreateAccountListForLandscape(
             onCameraClicked = onCameraClicked,
             onGalleryClicked = onGalleryClicked,
             onDeletePhoto = onDeletePhoto,
+            onLocationRequested = onLocationRequested,
             onRequestToOpenBrowser = onRequestToOpenBrowser,
         )
     }
@@ -270,7 +297,9 @@ fun CreateAccountProfileImage(
 }
 
 @Composable
-fun CreateAccountProfileHeading(accountProfileHeading: AccountHeading) {
+fun CreateAccountProfileHeading(
+    accountProfileHeading: AccountHeading
+) {
     Text(
         text = accountProfileHeading.label,
         style = MaterialTheme.typography.overline,
@@ -281,7 +310,9 @@ fun CreateAccountProfileHeading(accountProfileHeading: AccountHeading) {
 }
 
 @Composable
-fun CreateAccountProfileText(accountProfileText: AccountProfileText) {
+fun CreateAccountProfileText(
+    accountProfileText: AccountProfileText
+) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -307,8 +338,17 @@ fun CreateAccountProfileText(accountProfileText: AccountProfileText) {
 }
 
 @Composable
-fun CreateAccountProfileSwitch(accountProfileSwitch: AccountProfileSwitch, accountViewModel: AccountViewModel) {
-    val context = ContextAmbient.current
+fun CreateAccountProfileSwitch(
+    accountProfileSwitch: AccountProfileSwitch,
+    accountViewModel: AccountViewModel,
+    onLocationRequested: () -> Unit,
+) {
+    val openPermissionOffRequestDialog = remember { mutableStateOf(false) }
+
+    if (openPermissionOffRequestDialog.value) {
+        OnLocationSwitchOffRequest(onDismissRequest = { openPermissionOffRequestDialog.value = false })
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -336,9 +376,15 @@ fun CreateAccountProfileSwitch(accountProfileSwitch: AccountProfileSwitch, accou
             checked = accountProfileSwitch.switchValue,
             onCheckedChange = { checked ->
                 when (accountProfileSwitch.id) {
-                    ACCOUNT_SWITCH_PRIVACY.hashCode() -> { accountViewModel.setAsyncToggle(checked = checked) }
-                    ACCOUNT_SWITCH_LOCATION.hashCode() -> { Toast.makeText(context, "This is not toggleable", Toast.LENGTH_SHORT).show() }
-                    ACCOUNT_SWITCH_DATA_USAGE.hashCode() -> { accountViewModel.setSyncToggle(checked = checked) }
+                    ACCOUNT_SWITCH_PRIVACY.hashCode() -> {
+                        accountViewModel.setAsyncToggle(checked = checked)
+                    }
+                    ACCOUNT_SWITCH_LOCATION.hashCode() -> {
+                        if (checked) onLocationRequested.invoke() else openPermissionOffRequestDialog.value = true
+                    }
+                    ACCOUNT_SWITCH_DATA_USAGE.hashCode() -> {
+                        accountViewModel.setSyncToggle(checked = checked)
+                    }
                 }
             },
             color = MaterialTheme.colors.onSurface,
@@ -364,6 +410,36 @@ fun CreateAccountProfileLink(
             .clickable(onClick = { onRequestToOpenBrowser.invoke(accountProfileLink.url) })
             .padding(horizontal = 16.dp, vertical = 8.dp),
     )
+}
+
+@Composable
+fun OnLocationSwitchOffRequest(
+    onDismissRequest: () -> Unit,
+) {
+    ComposeAccountTheme {
+        // Check AlertDialog
+        Popup(
+            isFocusable = true,
+            onDismissRequest = onDismissRequest,
+            offset = IntOffset(200, 200),
+            alignment = Alignment.Center,
+        ) {
+            Column(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .background(color = MaterialTheme.colors.surface, shape = MaterialTheme.shapes.medium)
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "Permission can not be denied from application, please go to app settings and turn off you location permission manually.",
+                    color = MaterialTheme.colors.onSurface,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(4.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable

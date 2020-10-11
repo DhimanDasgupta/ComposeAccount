@@ -16,4 +16,4 @@ data class AccountProfileLink(override val id: Int, val label: String, val url: 
 
 data class AllAccountItems(val accountItems: List<AccountItem>)
 
-fun defaultAllAccountItems(): AllAccountItems = defaultAccountPreferences().toFullAccountProfile()
+fun defaultAllAccountItems(): AllAccountItems = defaultAccountPreferences().toFullAccountProfile(false)

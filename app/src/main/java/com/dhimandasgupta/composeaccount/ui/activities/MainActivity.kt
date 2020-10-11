@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.setContent
+import androidx.core.content.PermissionChecker
 import androidx.lifecycle.ViewModelProvider
 import com.dhimandasgupta.composeaccount.ext.copyToCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.deleteCacheDirectory
@@ -23,6 +24,10 @@ class MainActivity : AppCompatActivity() {
     private val accountViewModel: AccountViewModel by lazy { ViewModelProvider(this).get(AccountViewModel::class.java) }
 
     private val cameraUri: Uri by lazy { getCameraFileUri() }
+
+    private val askLocationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        accountViewModel.setLocationGranted(granted = granted)
+    }
 
     private val askCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
@@ -79,6 +84,9 @@ class MainActivity : AppCompatActivity() {
                 onDeletePhoto = {
                     deletePhoto()
                 },
+                onLocationRequested = {
+                  launchLocationPermission()
+                },
                 onRequestToOpenBrowser = {
                     openExternalBrowser(it)
                 }
@@ -86,9 +94,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        accountViewModel.setLocationGranted(
+            PermissionChecker.checkCallingOrSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED &&
+                PermissionChecker.checkCallingOrSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED
+        )
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
+        askLocationPermission.unregister()
         askCameraPermission.unregister()
         capturePhoto.unregister()
         selectPicture.unregister()
@@ -105,6 +123,10 @@ class MainActivity : AppCompatActivity() {
     private fun deletePhoto() {
         accountViewModel.deleteProfileImage()
         deleteCacheDirectory()
+    }
+
+    private fun launchLocationPermission() {
+        askLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     private fun openExternalBrowser(url: String) {
