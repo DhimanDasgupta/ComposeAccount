@@ -5,10 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.setContent
 import androidx.core.content.PermissionChecker
-import androidx.lifecycle.ViewModelProvider
 import com.dhimandasgupta.composeaccount.ext.copyToCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.deleteCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.getCameraFileUri
@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val accountViewModel: AccountViewModel by lazy { ViewModelProvider(this).get(AccountViewModel::class.java) }
+    private val accountViewModel: AccountViewModel by viewModels()
 
     private val cameraUri: Uri by lazy { getCameraFileUri() }
 
