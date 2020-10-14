@@ -74,7 +74,7 @@ object Deps {
         const val material = "com.google.android.material:material:$androidXVersion"
 
         object Compose {
-            private const val version = "1.0.0-alpha04"
+            private const val version = "1.0.0-alpha05"
 
             const val ui = "androidx.compose.ui:ui:$version"
             const val runtime = "androidx.compose.runtime:runtime:$version"

@@ -11,10 +11,12 @@ import com.dhimandasgupta.composeaccount.data.AccountPreferencesRepository
 import com.dhimandasgupta.composeaccount.ui.data.AllAccountItems
 import com.dhimandasgupta.composeaccount.ui.data.defaultAllAccountItems
 import com.dhimandasgupta.composeaccount.ui.data.toFullAccountProfile
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class AccountViewModel @ViewModelInject constructor(
     private val accountPreferencesRepository: AccountPreferencesRepository
 ) : ViewModel() {
@@ -41,11 +43,6 @@ class AccountViewModel @ViewModelInject constructor(
         }
         allAccountItemsMediatorLiveData.addSource(locationLiveData) {
             mergeLiveDatumToGenerateFinalUIModel()
-        }
-
-        viewModelScope.launch {
-            delay(5_000)
-            setName("Dhiman Dasgupta")
         }
     }
 

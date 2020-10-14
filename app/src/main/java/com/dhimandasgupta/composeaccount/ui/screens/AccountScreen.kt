@@ -19,11 +19,14 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.outlined.Face
@@ -37,26 +40,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.Dialog
 import com.dhimandasgupta.composeaccount.ui.common.ComposeAccountTheme
 import com.dhimandasgupta.composeaccount.ui.data.ACCOUNT_SWITCH_DATA_USAGE
 import com.dhimandasgupta.composeaccount.ui.data.ACCOUNT_SWITCH_LOCATION
 import com.dhimandasgupta.composeaccount.ui.data.ACCOUNT_SWITCH_PRIVACY
+import com.dhimandasgupta.composeaccount.ui.data.ACCOUNT_TEXT_NAME
 import com.dhimandasgupta.composeaccount.ui.data.AccountHeading
 import com.dhimandasgupta.composeaccount.ui.data.AccountProfileImage
 import com.dhimandasgupta.composeaccount.ui.data.AccountProfileLink
 import com.dhimandasgupta.composeaccount.ui.data.AccountProfileSwitch
 import com.dhimandasgupta.composeaccount.ui.data.AccountProfileText
 import com.dhimandasgupta.composeaccount.ui.data.AllAccountItems
-import com.dhimandasgupta.composeaccount.ui.data.defaultAllAccountItems
 import com.dhimandasgupta.composeaccount.viewmodel.AccountViewModel
 import dev.chrisbanes.accompanist.coil.CoilImage
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
 
+@ExperimentalCoroutinesApi
 @Composable
 fun AccountRoot(
     accountViewModel: AccountViewModel,
@@ -66,7 +71,7 @@ fun AccountRoot(
     onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit
 ) {
-    val accountState = accountViewModel.allAccountItems.observeAsState(defaultAllAccountItems())
+    val accountState = accountViewModel.allAccountItems.observeAsState(null)
 
     ComposeAccountTheme {
         Column(
@@ -76,9 +81,9 @@ fun AccountRoot(
         ) {
             CreateToolbar()
 
-            if (accountState.value != null) {
+            accountState.value?.let { allAccountItems ->
                 CreateAccountList(
-                    allAccountItems = accountState.value,
+                    allAccountItems = allAccountItems,
                     accountViewModel = accountViewModel,
                     onCameraClicked = onCameraClicked,
                     onGalleryClicked = onGalleryClicked,
@@ -86,9 +91,7 @@ fun AccountRoot(
                     onLocationRequested = onLocationRequested,
                     onRequestToOpenBrowser = onRequestToOpenBrowser,
                 )
-            } else {
-                CreateLoading()
-            }
+            } ?: CreateLoading()
         }
     }
 }
@@ -96,17 +99,21 @@ fun AccountRoot(
 @Composable
 fun CreateToolbar() {
     Box(
-        modifier = Modifier.fillMaxWidth().height(36.dp),
-        alignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        alignment = Alignment.CenterStart,
     ) {
         Text(
             text = "Account Settings",
-            style = MaterialTheme.typography.button,
+            style = MaterialTheme.typography.h5,
             textAlign = TextAlign.Start,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colors.onSurface,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
         )
     }
 }
@@ -114,7 +121,8 @@ fun CreateToolbar() {
 @Composable
 fun CreateLoading() {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         alignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
@@ -123,6 +131,7 @@ fun CreateLoading() {
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 fun CreateAccountList(
     allAccountItems: AllAccountItems,
@@ -155,6 +164,7 @@ fun CreateAccountList(
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 fun CreateAccountListForPortrait(
     allAccountItems: AllAccountItems,
@@ -169,13 +179,20 @@ fun CreateAccountListForPortrait(
         when (it) {
             is AccountProfileImage -> CreateAccountProfileImage(
                 accountProfileImage = it,
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 onCameraClicked = onCameraClicked,
                 onGalleryClicked = onGalleryClicked,
                 onDeletePhoto = onDeletePhoto,
             )
-            is AccountHeading -> CreateAccountProfileHeading(accountProfileHeading = it)
-            is AccountProfileText -> CreateAccountProfileText(accountProfileText = it)
+            is AccountHeading -> CreateAccountProfileHeading(
+                accountProfileHeading = it,
+            )
+            is AccountProfileText -> CreateAccountProfileText(
+                accountViewModel = accountViewModel,
+                accountProfileText = it,
+            )
             is AccountProfileSwitch -> CreateAccountProfileSwitch(
                 accountProfileSwitch = it,
                 accountViewModel = accountViewModel,
@@ -189,6 +206,7 @@ fun CreateAccountListForPortrait(
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 fun CreateAccountListForLandscape(
     allAccountItems: AllAccountItems,
@@ -204,19 +222,27 @@ fun CreateAccountListForLandscape(
     if (firstItemIsProfileImage) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
             CreateAccountProfileImage(
                 accountProfileImage = allAccountItems.accountItems[0] as AccountProfileImage,
-                modifier = Modifier.fillMaxWidth(0.4f).fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxWidth(0.35f)
+                    .fillMaxHeight(),
                 onCameraClicked = onCameraClicked,
                 onGalleryClicked = onGalleryClicked,
                 onDeletePhoto = onDeletePhoto,
             )
             LazyColumnFor(items = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size)) {
                 when (it) {
-                    is AccountHeading -> CreateAccountProfileHeading(accountProfileHeading = it)
-                    is AccountProfileText -> CreateAccountProfileText(accountProfileText = it)
+                    is AccountHeading -> CreateAccountProfileHeading(
+                        accountProfileHeading = it,
+                    )
+                    is AccountProfileText -> CreateAccountProfileText(
+                        accountViewModel = accountViewModel,
+                        accountProfileText = it,
+                    )
                     is AccountProfileSwitch -> CreateAccountProfileSwitch(
                         accountProfileSwitch = it,
                         accountViewModel = accountViewModel,
@@ -224,7 +250,7 @@ fun CreateAccountListForLandscape(
                     )
                     is AccountProfileLink -> CreateAccountProfileLink(
                         accountProfileLink = it,
-                        onRequestToOpenBrowser = onRequestToOpenBrowser
+                        onRequestToOpenBrowser = onRequestToOpenBrowser,
                     )
                     else -> {}
                 }
@@ -255,28 +281,46 @@ fun CreateAccountProfileImage(
 
     val openDialog = remember { mutableStateOf(false) }
 
-    Spacer(modifier = Modifier.size(8.dp))
+    Spacer(
+        modifier = Modifier
+            .size(8.dp)
+    )
     Box(
-        modifier = Modifier.then(modifier).size(156.dp),
+        modifier = Modifier
+            .then(modifier)
+            .size(156.dp),
         alignment = Alignment.Center,
     ) {
         // Need to check How to show Placeholder in Coil in compose
         if (accountProfileImage.profileImage.isNotBlank()) {
             CoilImage(
-                data = File(directory, accountProfileImage.profileImage),
+                data = File(
+                    directory,
+                    accountProfileImage.profileImage
+                ),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(156.dp).clip(CircleShape),
+                modifier = Modifier
+                    .size(156.dp)
+                    .clip(CircleShape),
             )
         } else {
             Icon(
-                asset = Icons.Outlined.Face.copy(defaultWidth = 156.dp, defaultHeight = 156.dp),
-                modifier = Modifier.size(156.dp).clip(CircleShape),
+                asset = Icons.Outlined.Face.copy(
+                    defaultWidth = 156.dp,
+                    defaultHeight = 156.dp
+                ),
+                modifier = Modifier
+                    .size(156.dp)
+                    .clip(CircleShape),
                 tint = MaterialTheme.colors.onSurface,
             )
         }
 
         Icon(
-            asset = Icons.Filled.Face.copy(defaultWidth = 48.dp, defaultHeight = 48.dp),
+            asset = Icons.Filled.Face.copy(
+                defaultWidth = 48.dp,
+                defaultHeight = 48.dp
+            ),
             tint = MaterialTheme.colors.onSurface,
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
@@ -288,7 +332,7 @@ fun CreateAccountProfileImage(
     }
 
     if (openDialog.value) {
-        ImageUpdateDialog(
+        ShowImageUpdateSelectionDialog(
             onCameraClicked = onCameraClicked,
             onGalleryClicked = onGalleryClicked,
             onDeletePhoto = if (accountProfileImage.profileImage.isNotBlank()) onDeletePhoto else null,
@@ -305,16 +349,32 @@ fun CreateAccountProfileHeading(
         style = MaterialTheme.typography.overline,
         textAlign = TextAlign.Start,
         color = MaterialTheme.colors.onSurface,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .wrapContentWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
     )
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 fun CreateAccountProfileText(
-    accountProfileText: AccountProfileText
+    accountViewModel: AccountViewModel,
+    accountProfileText: AccountProfileText,
 ) {
+    val openNameChangeDialog = remember { mutableStateOf(false) }
+
+    if (openNameChangeDialog.value) {
+        ShowNameUpdateDialog(
+            initialName = accountProfileText.value,
+            onSaveClicked = { name -> accountViewModel.setName(name) },
+            onDismissRequest = { openNameChangeDialog.value = false },
+        )
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
@@ -325,7 +385,10 @@ fun CreateAccountProfileText(
             color = MaterialTheme.colors.onSurface,
             overflow = TextOverflow.Ellipsis,
         )
-        Spacer(modifier = Modifier.size(4.dp))
+        Spacer(
+            modifier =
+                Modifier.size(4.dp)
+        )
         Text(
             text = accountProfileText.value,
             style = MaterialTheme.typography.subtitle2,
@@ -333,10 +396,20 @@ fun CreateAccountProfileText(
             maxLines = 1,
             color = MaterialTheme.colors.onSurface,
             overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .clickable(
+                    onClick = {
+                        when (accountProfileText.id) {
+                            ACCOUNT_TEXT_NAME.hashCode() -> openNameChangeDialog.value = true
+                            else -> { }
+                        }
+                    }
+                )
         )
     }
 }
 
+@ExperimentalCoroutinesApi
 @Composable
 fun CreateAccountProfileSwitch(
     accountProfileSwitch: AccountProfileSwitch,
@@ -350,11 +423,14 @@ fun CreateAccountProfileSwitch(
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(0.75f)
+            modifier = Modifier
+                .fillMaxWidth(0.75f)
         ) {
             Text(
                 text = accountProfileSwitch.label,
@@ -364,7 +440,9 @@ fun CreateAccountProfileSwitch(
                 color = MaterialTheme.colors.onSurface,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(modifier = Modifier.size(4.dp))
+            Spacer(
+                modifier = Modifier.size(4.dp)
+            )
             Text(
                 text = accountProfileSwitch.detailsLabel,
                 style = MaterialTheme.typography.caption,
@@ -388,7 +466,9 @@ fun CreateAccountProfileSwitch(
                 }
             },
             color = MaterialTheme.colors.onSurface,
-            modifier = Modifier.padding(4.dp).fillMaxWidth(0.25f)
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(0.25f),
         )
     }
 }
@@ -406,7 +486,7 @@ fun CreateAccountProfileLink(
         color = MaterialTheme.colors.onSurface,
         overflow = TextOverflow.Ellipsis,
         modifier = Modifier
-            .fillMaxWidth()
+            .wrapContentWidth()
             .clickable(onClick = { onRequestToOpenBrowser.invoke(accountProfileLink.url) })
             .padding(horizontal = 16.dp, vertical = 8.dp),
     )
@@ -417,13 +497,7 @@ fun OnLocationSwitchOffRequest(
     onDismissRequest: () -> Unit,
 ) {
     ComposeAccountTheme {
-        // Check AlertDialog
-        Popup(
-            isFocusable = true,
-            onDismissRequest = onDismissRequest,
-            offset = IntOffset(200, 200),
-            alignment = Alignment.Center,
-        ) {
+        Dialog(onDismissRequest = onDismissRequest) {
             Column(
                 modifier = Modifier
                     .wrapContentSize()
@@ -443,26 +517,22 @@ fun OnLocationSwitchOffRequest(
 }
 
 @Composable
-fun ImageUpdateDialog(
+fun ShowImageUpdateSelectionDialog(
     onCameraClicked: () -> Unit,
     onGalleryClicked: () -> Unit,
     onDeletePhoto: (() -> Unit)? = null,
     onDismissRequest: () -> Unit,
 ) {
     ComposeAccountTheme {
-        // Check AlertDialog
-        Popup(
-            isFocusable = true,
+        Dialog(
             onDismissRequest = onDismissRequest,
-            offset = IntOffset(200, 200),
-            alignment = Alignment.Center,
         ) {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .wrapContentSize()
-                    .background(color = MaterialTheme.colors.surface, shape = MaterialTheme.shapes.medium)
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .background(color = MaterialTheme.colors.background, shape = MaterialTheme.shapes.medium)
+                    .padding(16.dp),
             ) {
                 Text(
                     text = "Select from Camera",
@@ -478,6 +548,7 @@ fun ImageUpdateDialog(
                         )
                         .padding(4.dp)
                 )
+                Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     text = "Select from Gallery",
                     maxLines = 1,
@@ -494,6 +565,7 @@ fun ImageUpdateDialog(
                 )
 
                 if (onDeletePhoto != null) {
+                    Spacer(modifier = Modifier.size(8.dp))
                     Text(
                         text = "Delete Image",
                         maxLines = 1,
@@ -508,6 +580,89 @@ fun ImageUpdateDialog(
                             )
                             .padding(4.dp)
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ShowNameUpdateDialog(
+    initialName: String,
+    onSaveClicked: (String) -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    val textState = remember { mutableStateOf(TextFieldValue(initialName)) }
+
+    ComposeAccountTheme {
+        Dialog(onDismissRequest = onDismissRequest) {
+            Column(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .background(color = MaterialTheme.colors.background, shape = MaterialTheme.shapes.medium)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Change your profile name",
+                    maxLines = 1,
+                    color = MaterialTheme.colors.onSurface,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .padding(4.dp),
+                )
+                Spacer(
+                    modifier = Modifier
+                        .size(8.dp),
+                )
+                TextField(
+                    value = textState.value,
+                    onValueChange = { textState.value = it }
+                )
+                Spacer(
+                    modifier = Modifier
+                        .size(8.dp),
+                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    Button(
+                        onClick = onDismissRequest,
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .background(
+                                color = MaterialTheme.colors.background,
+                                shape = MaterialTheme.shapes.medium
+                            ),
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            maxLines = 1,
+                            color = MaterialTheme.colors.onSurface,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f),
+                        )
+                    }
+
+                    Button(
+                        enabled = textState.value.text.isNotBlank(),
+                        onClick = {
+                            onSaveClicked.invoke(textState.value.text)
+                            onDismissRequest.invoke()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .background(color = MaterialTheme.colors.background, shape = MaterialTheme.shapes.medium)
+                    ) {
+                        Text(
+                            text = "Save",
+                            maxLines = 1,
+                            color = MaterialTheme.colors.onSurface,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 }
             }
         }

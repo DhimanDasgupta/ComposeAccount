@@ -4,7 +4,7 @@ import com.dhimandasgupta.composeaccount.AccountPreferences
 
 private const val ACCOUNT_PROFILE_IMAGE = "ACCOUNT_PROFILE_IMAGE"
 private const val ACCOUNT_HEADING_CONTACTS = "ACCOUNT_HEADING_CONTACTS"
-private const val ACCOUNT_TEXT_NAME = "ACCOUNT_TEXT_NAME"
+const val ACCOUNT_TEXT_NAME = "ACCOUNT_TEXT_NAME"
 private const val ACCOUNT_TEXT_EMAIL = "ACCOUNT_TEXT_EMAIL"
 private const val ACCOUNT_TEXT_NUMBER = "ACCOUNT_TEXT_NUMBER"
 private const val ACCOUNT_HEADING_TOGGLES = "ACCOUNT_HEADING_TOGGLES"

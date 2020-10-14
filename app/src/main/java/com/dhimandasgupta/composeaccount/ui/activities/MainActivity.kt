@@ -18,7 +18,9 @@ import com.dhimandasgupta.composeaccount.ui.screens.AccountRoot
 import com.dhimandasgupta.composeaccount.viewmodel.AccountViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val accountViewModel: AccountViewModel by viewModels()
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     deletePhoto()
                 },
                 onLocationRequested = {
-                  launchLocationPermission()
+                    launchLocationPermission()
                 },
                 onRequestToOpenBrowser = {
                     openExternalBrowser(it)
