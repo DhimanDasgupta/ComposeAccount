@@ -62,14 +62,17 @@ class AccountViewModel @ViewModelInject constructor(
     }
 
     fun setProfileImagePath(filePath: String) = viewModelScope.launch {
+        delay(2_000)
         accountPreferencesRepository.setProfileImagePath(imagePath = filePath)
     }
 
     fun deleteProfileImage() = viewModelScope.launch {
+        delay(2_500)
         accountPreferencesRepository.setProfileImagePath("")
     }
 
     fun setName(name: String) = viewModelScope.launch {
+        delay(1_500)
         accountPreferencesRepository.setName(name = name)
     }
 

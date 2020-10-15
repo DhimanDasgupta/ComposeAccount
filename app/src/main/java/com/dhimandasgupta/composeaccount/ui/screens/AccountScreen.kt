@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Switch
@@ -623,46 +622,32 @@ fun ShowNameUpdateDialog(
                         .size(8.dp),
                 )
                 Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
                         .fillMaxWidth(),
                 ) {
-                    Button(
-                        onClick = onDismissRequest,
+                    Text(
+                        text = "Cancel",
+                        maxLines = 1,
+                        color = MaterialTheme.colors.onSurface,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .background(
-                                color = MaterialTheme.colors.background,
-                                shape = MaterialTheme.shapes.medium
-                            ),
-                    ) {
-                        Text(
-                            text = "Cancel",
-                            maxLines = 1,
-                            color = MaterialTheme.colors.onSurface,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .fillMaxWidth(0.5f),
-                        )
-                    }
+                            .clickable(onClick = onDismissRequest)
+                            .padding(top = 16.dp),
+                    )
 
-                    Button(
-                        enabled = textState.value.text.isNotBlank(),
-                        onClick = {
-                            onSaveClicked.invoke(textState.value.text)
-                            onDismissRequest.invoke()
-                        },
+                    Text(
+                        text = "Save",
+                        maxLines = 1,
+                        color = MaterialTheme.colors.onSurface,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .background(color = MaterialTheme.colors.background, shape = MaterialTheme.shapes.medium)
-                    ) {
-                        Text(
-                            text = "Save",
-                            maxLines = 1,
-                            color = MaterialTheme.colors.onSurface,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+                            .clickable(onClick = {
+                                onSaveClicked.invoke(textState.value.text)
+                                onDismissRequest.invoke()
+                            })
+                            .padding(top = 16.dp),
+                    )
                 }
             }
         }
