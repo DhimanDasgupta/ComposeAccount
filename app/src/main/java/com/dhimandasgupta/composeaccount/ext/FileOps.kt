@@ -26,6 +26,8 @@ fun Context.getCameraFileUri(): Uri {
     )
 }
 
+fun Context.getTargetDirectory() = File(cacheDir, FOLDER_CAMERA)
+
 fun Context.getOutputMediaFile(): File {
     val mediaStorageDir = File(cacheDir, FOLDER_CAMERA)
     if (!mediaStorageDir.exists()) {

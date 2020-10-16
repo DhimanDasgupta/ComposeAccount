@@ -6,7 +6,9 @@ import com.buildsrc.Deps
 //apply plugin: 'java'
 
 repositories {
+    google()
     jcenter()
+    maven { url "https://jitpack.io" }
 }
 
 configurations {

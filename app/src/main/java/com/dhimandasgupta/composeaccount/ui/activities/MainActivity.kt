@@ -8,12 +8,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.setContent
-import androidx.core.content.PermissionChecker
 import com.dhimandasgupta.composeaccount.ext.copyToCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.deleteCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.getCameraFileUri
+import com.dhimandasgupta.composeaccount.ext.isLocationPermissionGranted
 import com.dhimandasgupta.composeaccount.ext.openLinkOnExternalApplication
 import com.dhimandasgupta.composeaccount.ext.openSettings
+import com.dhimandasgupta.composeaccount.ui.contracts.CropActivityContract
 import com.dhimandasgupta.composeaccount.ui.screens.AccountRoot
 import com.dhimandasgupta.composeaccount.viewmodel.AccountViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -45,9 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     private val capturePhoto = registerForActivityResult(ActivityResultContracts.TakePicture()) { capturedSuccessfully ->
         if (capturedSuccessfully) {
-            cameraUri.lastPathSegment?.let { storagePath ->
-                accountViewModel.setProfileImagePath(storagePath)
-            }
+            cropImage.launch(cameraUri)
         } else {
             showSnackBar(
                 text = "Looks like you did not clicked any photo",
@@ -61,9 +60,7 @@ class MainActivity : AppCompatActivity() {
         activityResultRegistry.register("select_picture", ActivityResultContracts.GetContent()) { uri ->
             uri?.let {
                 val copiedLocation = copyToCacheDirectory(uri)
-                copiedLocation?.lastPathSegment?.let { storagePath ->
-                    accountViewModel.setProfileImagePath(storagePath)
-                }
+                copiedLocation?.let { cropImage.launch(copiedLocation) }
             } ?: showSnackBar(
                 text = "Looks like you did not selected anything",
                 actionText = "Open Gallery",
@@ -72,26 +69,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val cropImage = registerForActivityResult(CropActivityContract(this)) { uri ->
+        uri?.lastPathSegment?.let { storagePath -> accountViewModel.setProfileImagePath(storagePath) }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AccountRoot(
                 accountViewModel = accountViewModel,
-                onCameraClicked = {
-                    launchCamera()
-                },
-                onGalleryClicked = {
-                    launchGallery()
-                },
-                onDeletePhoto = {
-                    deletePhoto()
-                },
-                onLocationRequested = {
-                    launchLocationPermission()
-                },
-                onRequestToOpenBrowser = {
-                    openExternalBrowser(it)
-                }
+                onCameraClicked = { launchCamera() },
+                onGalleryClicked = { launchGallery() },
+                onDeletePhoto = { deletePhoto() },
+                onLocationRequested = { launchLocationPermission() },
+                onRequestToOpenBrowser = { openExternalBrowser(it) }
             )
         }
     }
@@ -99,10 +90,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        accountViewModel.setLocationGranted(
-            PermissionChecker.checkCallingOrSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED &&
-                PermissionChecker.checkCallingOrSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED
-        )
+        accountViewModel.setLocationGranted(isLocationPermissionGranted())
     }
 
     override fun onDestroy() {
@@ -112,28 +100,21 @@ class MainActivity : AppCompatActivity() {
         askCameraPermission.unregister()
         capturePhoto.unregister()
         selectPicture.unregister()
+        cropImage.unregister()
     }
 
-    private fun launchCamera() {
-        askCameraPermission.launch(Manifest.permission.CAMERA)
-    }
+    private fun launchCamera() : Unit = askCameraPermission.launch(Manifest.permission.CAMERA)
 
-    private fun launchGallery() {
-        selectPicture.launch("image/*")
-    }
+    private fun launchGallery() : Unit = selectPicture.launch("image/*")
 
     private fun deletePhoto() {
         accountViewModel.deleteProfileImage()
         deleteCacheDirectory()
     }
 
-    private fun launchLocationPermission() {
-        askLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-    }
+    private fun launchLocationPermission() : Unit = askLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
-    private fun openExternalBrowser(url: String) {
-        openLinkOnExternalApplication(url = url)
-    }
+    private fun openExternalBrowser(url: String) = openLinkOnExternalApplication(url = url)
 
     private fun showSnackBar(
         text: String,

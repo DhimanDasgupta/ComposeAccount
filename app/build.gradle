@@ -94,6 +94,9 @@ dependencies {
     // Data Store
     implementation Deps.AndroidX.DataStore.protoDataStore
     implementation Deps.AndroidX.DataStore.preferenceDataStore
+
+    // UCrop Library
+    implementation Deps.UCrop.ucrop
 }
 
 kapt {

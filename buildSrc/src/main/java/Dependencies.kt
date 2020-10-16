@@ -133,4 +133,10 @@ object Deps {
         const val protocolBufferLite = "com.google.protobuf:protobuf-javalite:$version"
         const val protocolBuffer = "com.google.protobuf:protoc:$version"
     }
+
+    object UCrop {
+        private const val version = "2.2.6"
+
+        const val ucrop = "com.github.yalantis:ucrop:$version"
+    }
 }
