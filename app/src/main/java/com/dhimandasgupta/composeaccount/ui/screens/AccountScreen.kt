@@ -1,7 +1,6 @@
 package com.dhimandasgupta.composeaccount.ui.screens
 
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +22,9 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.Switch
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
@@ -75,7 +76,7 @@ fun AccountRoot(
     ComposeAccountTheme {
         Column(
             modifier = Modifier
-                .background(color = MaterialTheme.colors.surface)
+                .background(color = colors.surface)
                 .fillMaxSize()
         ) {
             CreateToolbar()
@@ -109,7 +110,7 @@ fun CreateToolbar() {
             textAlign = TextAlign.Start,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = MaterialTheme.colors.onSurface,
+            color = colors.onSurface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
@@ -125,7 +126,7 @@ fun CreateLoading() {
         alignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
-            color = MaterialTheme.colors.onSurface
+            color = colors.onSurface
         )
     }
 }
@@ -308,10 +309,10 @@ fun CreateAccountProfileImage(
                     defaultWidth = 156.dp,
                     defaultHeight = 156.dp
                 ),
+                tint = colors.onSurface,
                 modifier = Modifier
                     .size(156.dp)
                     .clip(CircleShape),
-                tint = MaterialTheme.colors.onSurface,
             )
         }
 
@@ -320,7 +321,7 @@ fun CreateAccountProfileImage(
                 defaultWidth = 48.dp,
                 defaultHeight = 48.dp
             ),
-            tint = MaterialTheme.colors.onSurface,
+            tint = colors.onSurface,
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
                 .preferredSize(48.dp)
@@ -347,7 +348,7 @@ fun CreateAccountProfileHeading(
         text = accountProfileHeading.label,
         style = MaterialTheme.typography.overline,
         textAlign = TextAlign.Start,
-        color = MaterialTheme.colors.onSurface,
+        color = colors.onSurface,
         modifier = Modifier
             .wrapContentWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -381,7 +382,7 @@ fun CreateAccountProfileText(
             style = MaterialTheme.typography.body2,
             textAlign = TextAlign.Start,
             maxLines = 1,
-            color = MaterialTheme.colors.onSurface,
+            color = colors.onSurface,
             overflow = TextOverflow.Ellipsis,
         )
         Spacer(
@@ -393,7 +394,7 @@ fun CreateAccountProfileText(
             style = MaterialTheme.typography.subtitle2,
             textAlign = TextAlign.End,
             maxLines = 1,
-            color = MaterialTheme.colors.onSurface,
+            color = colors.onSurface,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .clickable(
@@ -436,7 +437,7 @@ fun CreateAccountProfileSwitch(
                 style = MaterialTheme.typography.body2,
                 textAlign = TextAlign.Start,
                 maxLines = 1,
-                color = MaterialTheme.colors.onSurface,
+                color = colors.onSurface,
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(
@@ -446,7 +447,7 @@ fun CreateAccountProfileSwitch(
                 text = accountProfileSwitch.detailsLabel,
                 style = MaterialTheme.typography.caption,
                 textAlign = TextAlign.Start,
-                color = MaterialTheme.colors.onSurface,
+                color = colors.onSurface,
             )
         }
         Switch(
@@ -464,7 +465,6 @@ fun CreateAccountProfileSwitch(
                     }
                 }
             },
-            color = MaterialTheme.colors.onSurface,
             modifier = Modifier
                 .padding(4.dp)
                 .fillMaxWidth(0.25f),
@@ -482,7 +482,7 @@ fun CreateAccountProfileLink(
         style = MaterialTheme.typography.subtitle2,
         textAlign = TextAlign.Start,
         maxLines = 1,
-        color = MaterialTheme.colors.onSurface,
+        color = colors.onSurface,
         overflow = TextOverflow.Ellipsis,
         modifier = Modifier
             .wrapContentWidth()
@@ -500,13 +500,13 @@ fun OnLocationSwitchOffRequest(
             Column(
                 modifier = Modifier
                     .wrapContentSize()
-                    .background(color = MaterialTheme.colors.surface, shape = MaterialTheme.shapes.medium)
+                    .background(color = colors.surface, shape = MaterialTheme.shapes.medium)
                     .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
                     text = "Permission can not be denied from application, please go to app settings and turn off you location permission manually.",
-                    color = MaterialTheme.colors.onSurface,
+                    color = colors.onSurface,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(4.dp)
                 )
@@ -530,13 +530,13 @@ fun ShowImageUpdateSelectionDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .wrapContentSize()
-                    .background(color = MaterialTheme.colors.background, shape = MaterialTheme.shapes.medium)
+                    .background(color = colors.background, shape = MaterialTheme.shapes.medium)
                     .padding(16.dp),
             ) {
                 Text(
                     text = "Select from Camera",
                     maxLines = 1,
-                    color = MaterialTheme.colors.onSurface,
+                    color = colors.onSurface,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .clickable(
@@ -551,7 +551,7 @@ fun ShowImageUpdateSelectionDialog(
                 Text(
                     text = "Select from Gallery",
                     maxLines = 1,
-                    color = MaterialTheme.colors.onSurface,
+                    color = colors.onSurface,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .clickable(
@@ -568,7 +568,7 @@ fun ShowImageUpdateSelectionDialog(
                     Text(
                         text = "Delete Image",
                         maxLines = 1,
-                        color = MaterialTheme.colors.onSurface,
+                        color = colors.onSurface,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .clickable(
@@ -598,13 +598,13 @@ fun ShowNameUpdateDialog(
             Column(
                 modifier = Modifier
                     .wrapContentSize()
-                    .background(color = MaterialTheme.colors.background, shape = MaterialTheme.shapes.medium)
+                    .background(color = colors.background, shape = MaterialTheme.shapes.medium)
                     .padding(16.dp)
             ) {
                 Text(
                     text = "Change your profile name",
                     maxLines = 1,
-                    color = MaterialTheme.colors.onSurface,
+                    color = colors.onSurface,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .padding(4.dp),
@@ -629,7 +629,7 @@ fun ShowNameUpdateDialog(
                     Text(
                         text = "Cancel",
                         maxLines = 1,
-                        color = MaterialTheme.colors.onSurface,
+                        color = colors.onSurface,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .clickable(onClick = onDismissRequest)
@@ -639,7 +639,7 @@ fun ShowNameUpdateDialog(
                     Text(
                         text = "Save",
                         maxLines = 1,
-                        color = MaterialTheme.colors.onSurface,
+                        color = colors.onSurface,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .clickable(onClick = {

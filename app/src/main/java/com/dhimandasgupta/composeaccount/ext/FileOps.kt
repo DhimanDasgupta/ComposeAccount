@@ -71,7 +71,7 @@ fun Context.copyToCacheDirectory(inputFile: Uri): Uri? {
 
 fun Context.deleteCacheDirectory() {
     val mediaStorageDir = File(cacheDir, FOLDER_CAMERA)
-    mediaStorageDir.listFiles().map { if (!it.isDirectory) it.delete() }
+    mediaStorageDir.listFiles()?.map { if (!it.isDirectory) it.delete() }
 }
 
 private fun readBinaryStream(

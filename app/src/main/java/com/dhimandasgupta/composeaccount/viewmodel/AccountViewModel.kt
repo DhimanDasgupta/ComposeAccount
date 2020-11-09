@@ -8,11 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.dhimandasgupta.composeaccount.data.AccountPreferencesRepository
+import com.dhimandasgupta.composeaccount.data.defaultAccountPreferences
 import com.dhimandasgupta.composeaccount.ui.data.AllAccountItems
 import com.dhimandasgupta.composeaccount.ui.data.defaultAllAccountItems
 import com.dhimandasgupta.composeaccount.ui.data.toFullAccountProfile
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
@@ -20,10 +23,13 @@ import kotlinx.coroutines.launch
 class AccountViewModel @ViewModelInject constructor(
     private val accountPreferencesRepository: AccountPreferencesRepository
 ) : ViewModel() {
+    private val ceh = CoroutineExceptionHandler { _, _ -> }
+
     // Source One
     private val allAccountItemsFromRepository = accountPreferencesRepository
         .getAccountPreferences()
         .onStart { delay(2_000) }
+        .catch { emit(defaultAccountPreferences()) }
         .asLiveData(viewModelScope.coroutineContext)
 
     // Source Two
@@ -61,27 +67,27 @@ class AccountViewModel @ViewModelInject constructor(
         locationLiveData.postValue(granted)
     }
 
-    fun setProfileImagePath(filePath: String) = viewModelScope.launch {
+    fun setProfileImagePath(filePath: String) = viewModelScope.launch(ceh) {
         delay(2_000)
         accountPreferencesRepository.setProfileImagePath(imagePath = filePath)
     }
 
-    fun deleteProfileImage() = viewModelScope.launch {
+    fun deleteProfileImage() = viewModelScope.launch(ceh) {
         delay(2_500)
         accountPreferencesRepository.setProfileImagePath("")
     }
 
-    fun setName(name: String) = viewModelScope.launch {
+    fun setName(name: String) = viewModelScope.launch(ceh) {
         delay(1_500)
         accountPreferencesRepository.setName(name = name)
     }
 
-    fun setAsyncToggle(checked: Boolean) = viewModelScope.launch {
+    fun setAsyncToggle(checked: Boolean) = viewModelScope.launch(ceh) {
         delay(1_000)
         accountPreferencesRepository.setAsyncToggle(checked = checked)
     }
 
-    fun setSyncToggle(checked: Boolean) = viewModelScope.launch {
+    fun setSyncToggle(checked: Boolean) = viewModelScope.launch(ceh) {
         accountPreferencesRepository.setSyncToggle(checked = checked)
     }
 }
