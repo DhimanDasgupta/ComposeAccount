@@ -1,7 +1,6 @@
 package com.dhimandasgupta.composeaccount.ui.screens
 
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Switch
+import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -106,14 +108,14 @@ fun CreateToolbar() {
     ) {
         Text(
             text = "Account Settings",
-            style = MaterialTheme.typography.h5,
-            textAlign = TextAlign.Start,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = colors.onSurface,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
+            color = colors.onSurface,
+            textAlign = TextAlign.Start,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            style = typography.h5,
         )
     }
 }
@@ -121,8 +123,7 @@ fun CreateToolbar() {
 @Composable
 fun CreateLoading() {
     Box(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         alignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
@@ -346,12 +347,15 @@ fun CreateAccountProfileHeading(
 ) {
     Text(
         text = accountProfileHeading.label,
-        style = MaterialTheme.typography.overline,
+        style = typography.overline,
         textAlign = TextAlign.Start,
         color = colors.onSurface,
         modifier = Modifier
             .wrapContentWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(
+                horizontal = 16.dp,
+                vertical = 8.dp
+            ),
     )
 }
 
@@ -379,7 +383,7 @@ fun CreateAccountProfileText(
     ) {
         Text(
             text = accountProfileText.label,
-            style = MaterialTheme.typography.body2,
+            style = typography.body2,
             textAlign = TextAlign.Start,
             maxLines = 1,
             color = colors.onSurface,
@@ -391,7 +395,7 @@ fun CreateAccountProfileText(
         )
         Text(
             text = accountProfileText.value,
-            style = MaterialTheme.typography.subtitle2,
+            style = typography.subtitle2,
             textAlign = TextAlign.End,
             maxLines = 1,
             color = colors.onSurface,
@@ -434,7 +438,7 @@ fun CreateAccountProfileSwitch(
         ) {
             Text(
                 text = accountProfileSwitch.label,
-                style = MaterialTheme.typography.body2,
+                style = typography.body2,
                 textAlign = TextAlign.Start,
                 maxLines = 1,
                 color = colors.onSurface,
@@ -445,7 +449,7 @@ fun CreateAccountProfileSwitch(
             )
             Text(
                 text = accountProfileSwitch.detailsLabel,
-                style = MaterialTheme.typography.caption,
+                style = typography.caption,
                 textAlign = TextAlign.Start,
                 color = colors.onSurface,
             )
@@ -479,7 +483,7 @@ fun CreateAccountProfileLink(
 ) {
     Text(
         text = accountProfileLink.label,
-        style = MaterialTheme.typography.subtitle2,
+        style = typography.subtitle2,
         textAlign = TextAlign.Start,
         maxLines = 1,
         color = colors.onSurface,
@@ -500,7 +504,10 @@ fun OnLocationSwitchOffRequest(
             Column(
                 modifier = Modifier
                     .wrapContentSize()
-                    .background(color = colors.surface, shape = MaterialTheme.shapes.medium)
+                    .background(
+                        color = colors.surface,
+                        shape = MaterialTheme.shapes.medium
+                    )
                     .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -530,7 +537,10 @@ fun ShowImageUpdateSelectionDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .wrapContentSize()
-                    .background(color = colors.background, shape = MaterialTheme.shapes.medium)
+                    .background(
+                        color = colors.background,
+                        shape = MaterialTheme.shapes.medium
+                    )
                     .padding(16.dp),
             ) {
                 Text(
@@ -598,7 +608,10 @@ fun ShowNameUpdateDialog(
             Column(
                 modifier = Modifier
                     .wrapContentSize()
-                    .background(color = colors.background, shape = MaterialTheme.shapes.medium)
+                    .background(
+                        color = colors.background,
+                        shape = MaterialTheme.shapes.medium
+                    )
                     .padding(16.dp)
             ) {
                 Text(
@@ -615,7 +628,10 @@ fun ShowNameUpdateDialog(
                 )
                 TextField(
                     value = textState.value,
-                    onValueChange = { textState.value = it }
+                    textStyle = TextStyle(
+                      color = colors.onSurface,
+                    ),
+                    onValueChange = { textState.value = it },
                 )
                 Spacer(
                     modifier = Modifier
@@ -642,10 +658,12 @@ fun ShowNameUpdateDialog(
                         color = colors.onSurface,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
-                            .clickable(onClick = {
-                                onSaveClicked.invoke(textState.value.text)
-                                onDismissRequest.invoke()
-                            })
+                            .clickable(
+                                onClick = {
+                                    onSaveClicked.invoke(textState.value.text)
+                                    onDismissRequest.invoke()
+                                }
+                            )
                             .padding(top = 16.dp),
                     )
                 }
