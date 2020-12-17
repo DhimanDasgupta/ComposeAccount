@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -39,8 +39,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ConfigurationAmbient
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientConfiguration
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -104,7 +104,7 @@ fun CreateToolbar() {
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),
-        alignment = Alignment.CenterStart,
+        contentAlignment = Alignment.CenterStart,
     ) {
         Text(
             text = "Account Settings",
@@ -124,7 +124,7 @@ fun CreateToolbar() {
 fun CreateLoading() {
     Box(
         modifier = Modifier.fillMaxSize(),
-        alignment = Alignment.Center,
+        contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(
             color = colors.onSurface
@@ -143,7 +143,7 @@ fun CreateAccountList(
     onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
-    when (ConfigurationAmbient.current.orientation) {
+    when (AmbientConfiguration.current.orientation) {
         ORIENTATION_LANDSCAPE -> CreateAccountListForLandscape(
             allAccountItems = allAccountItems,
             accountViewModel = accountViewModel,
@@ -176,34 +176,36 @@ fun CreateAccountListForPortrait(
     onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
-    LazyColumnFor(items = allAccountItems.accountItems) {
-        when (it) {
-            is AccountProfileImage -> CreateAccountProfileImage(
-                accountProfileImage = it,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                onCameraClicked = onCameraClicked,
-                onGalleryClicked = onGalleryClicked,
-                onDeletePhoto = onDeletePhoto,
-            )
-            is AccountHeading -> CreateAccountProfileHeading(
-                accountProfileHeading = it,
-            )
-            is AccountProfileText -> CreateAccountProfileText(
-                accountViewModel = accountViewModel,
-                accountProfileText = it,
-            )
-            is AccountProfileSwitch -> CreateAccountProfileSwitch(
-                accountProfileSwitch = it,
-                accountViewModel = accountViewModel,
-                onLocationRequested = onLocationRequested,
-            )
-            is AccountProfileLink -> CreateAccountProfileLink(
-                accountProfileLink = it,
-                onRequestToOpenBrowser = onRequestToOpenBrowser
-            )
-        }
+    LazyColumn {
+        items(items = allAccountItems.accountItems, itemContent = {
+            when (it) {
+                is AccountProfileImage -> CreateAccountProfileImage(
+                    accountProfileImage = it,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    onCameraClicked = onCameraClicked,
+                    onGalleryClicked = onGalleryClicked,
+                    onDeletePhoto = onDeletePhoto,
+                )
+                is AccountHeading -> CreateAccountProfileHeading(
+                    accountProfileHeading = it,
+                )
+                is AccountProfileText -> CreateAccountProfileText(
+                    accountViewModel = accountViewModel,
+                    accountProfileText = it,
+                )
+                is AccountProfileSwitch -> CreateAccountProfileSwitch(
+                    accountProfileSwitch = it,
+                    accountViewModel = accountViewModel,
+                    onLocationRequested = onLocationRequested,
+                )
+                is AccountProfileLink -> CreateAccountProfileLink(
+                    accountProfileLink = it,
+                    onRequestToOpenBrowser = onRequestToOpenBrowser
+                )
+            }
+        })
     }
 }
 
@@ -235,26 +237,30 @@ fun CreateAccountListForLandscape(
                 onGalleryClicked = onGalleryClicked,
                 onDeletePhoto = onDeletePhoto,
             )
-            LazyColumnFor(items = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size)) {
-                when (it) {
-                    is AccountHeading -> CreateAccountProfileHeading(
-                        accountProfileHeading = it,
-                    )
-                    is AccountProfileText -> CreateAccountProfileText(
-                        accountViewModel = accountViewModel,
-                        accountProfileText = it,
-                    )
-                    is AccountProfileSwitch -> CreateAccountProfileSwitch(
-                        accountProfileSwitch = it,
-                        accountViewModel = accountViewModel,
-                        onLocationRequested = onLocationRequested,
-                    )
-                    is AccountProfileLink -> CreateAccountProfileLink(
-                        accountProfileLink = it,
-                        onRequestToOpenBrowser = onRequestToOpenBrowser,
-                    )
-                    else -> {}
-                }
+            LazyColumn {
+                items(
+                    items = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size),
+                    itemContent = {
+                        when (it) {
+                            is AccountHeading -> CreateAccountProfileHeading(
+                                accountProfileHeading = it,
+                            )
+                            is AccountProfileText -> CreateAccountProfileText(
+                                accountViewModel = accountViewModel,
+                                accountProfileText = it,
+                            )
+                            is AccountProfileSwitch -> CreateAccountProfileSwitch(
+                                accountProfileSwitch = it,
+                                accountViewModel = accountViewModel,
+                                onLocationRequested = onLocationRequested,
+                            )
+                            is AccountProfileLink -> CreateAccountProfileLink(
+                                accountProfileLink = it,
+                                onRequestToOpenBrowser = onRequestToOpenBrowser,
+                            )
+                            else -> {}
+                        }
+                    })
             }
         }
     } else {
@@ -278,7 +284,7 @@ fun CreateAccountProfileImage(
     onDeletePhoto: () -> Unit,
     modifier: Modifier
 ) {
-    val directory = File(ContextAmbient.current.cacheDir, "Camera")
+    val directory = File(AmbientContext.current.cacheDir, "Camera")
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -290,7 +296,7 @@ fun CreateAccountProfileImage(
         modifier = Modifier
             .then(modifier)
             .size(156.dp),
-        alignment = Alignment.Center,
+        contentAlignment = Alignment.Center,
     ) {
         // Need to check How to show Placeholder in Coil in compose
         if (accountProfileImage.profileImage.isNotBlank()) {
@@ -306,7 +312,7 @@ fun CreateAccountProfileImage(
             )
         } else {
             Icon(
-                asset = Icons.Outlined.Face.copy(
+                imageVector = Icons.Outlined.Face.copy(
                     defaultWidth = 156.dp,
                     defaultHeight = 156.dp
                 ),
@@ -318,7 +324,7 @@ fun CreateAccountProfileImage(
         }
 
         Icon(
-            asset = Icons.Filled.Face.copy(
+            imageVector = Icons.Filled.Face.copy(
                 defaultWidth = 48.dp,
                 defaultHeight = 48.dp
             ),
