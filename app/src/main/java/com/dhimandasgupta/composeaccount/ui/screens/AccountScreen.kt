@@ -240,22 +240,22 @@ fun CreateAccountListForLandscape(
             LazyColumn {
                 items(
                     items = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size),
-                    itemContent = {
-                        when (it) {
+                    itemContent = { accountItem ->
+                        when (accountItem) {
                             is AccountHeading -> CreateAccountProfileHeading(
-                                accountProfileHeading = it,
+                                accountProfileHeading = accountItem,
                             )
                             is AccountProfileText -> CreateAccountProfileText(
                                 accountViewModel = accountViewModel,
-                                accountProfileText = it,
+                                accountProfileText = accountItem,
                             )
                             is AccountProfileSwitch -> CreateAccountProfileSwitch(
-                                accountProfileSwitch = it,
+                                accountProfileSwitch = accountItem,
                                 accountViewModel = accountViewModel,
                                 onLocationRequested = onLocationRequested,
                             )
                             is AccountProfileLink -> CreateAccountProfileLink(
-                                accountProfileLink = it,
+                                accountProfileLink = accountItem,
                                 onRequestToOpenBrowser = onRequestToOpenBrowser,
                             )
                             else -> {}
