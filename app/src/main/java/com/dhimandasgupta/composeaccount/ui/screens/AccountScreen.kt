@@ -177,10 +177,10 @@ fun CreateAccountListForPortrait(
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
     LazyColumn {
-        items(items = allAccountItems.accountItems, itemContent = {
-            when (it) {
+        items(items = allAccountItems.accountItems, itemContent = { accountItem ->
+            when (accountItem) {
                 is AccountProfileImage -> CreateAccountProfileImage(
-                    accountProfileImage = it,
+                    accountProfileImage = accountItem,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
@@ -189,19 +189,19 @@ fun CreateAccountListForPortrait(
                     onDeletePhoto = onDeletePhoto,
                 )
                 is AccountHeading -> CreateAccountProfileHeading(
-                    accountProfileHeading = it,
+                    accountProfileHeading = accountItem,
                 )
                 is AccountProfileText -> CreateAccountProfileText(
                     accountViewModel = accountViewModel,
-                    accountProfileText = it,
+                    accountProfileText = accountItem,
                 )
                 is AccountProfileSwitch -> CreateAccountProfileSwitch(
-                    accountProfileSwitch = it,
+                    accountProfileSwitch = accountItem,
                     accountViewModel = accountViewModel,
                     onLocationRequested = onLocationRequested,
                 )
                 is AccountProfileLink -> CreateAccountProfileLink(
-                    accountProfileLink = it,
+                    accountProfileLink = accountItem,
                     onRequestToOpenBrowser = onRequestToOpenBrowser
                 )
             }
