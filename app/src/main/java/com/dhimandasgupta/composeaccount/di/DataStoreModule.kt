@@ -10,12 +10,12 @@ import com.dhimandasgupta.composeaccount.data.AccountPreferencesRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object DataStoreModule {
     @Provides
     fun providesDataStore(@ApplicationContext context: Context): DataStore<AccountPreferences> =
@@ -26,7 +26,7 @@ object DataStoreModule {
 }
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
+@InstallIn(ViewModelComponent::class)
 class ActivityModule {
     @Provides
     fun providesAccountPreferencesRepository(dataStore: DataStore<AccountPreferences>): AccountPreferencesRepository =

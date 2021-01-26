@@ -86,7 +86,6 @@ dependencies {
     implementation Deps.Hilt.hiltAndroid
     kapt Deps.Hilt.kapt
     implementation Deps.HiltAndroid.viewModel
-    kapt Deps.HiltAndroid.kapt
 
     // Protocol Buffer
     implementation Deps.ProtocolBuffer.protocolBufferLite

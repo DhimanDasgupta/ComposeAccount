@@ -1,6 +1,5 @@
 package com.dhimandasgupta.composeaccount.viewmodel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,15 +11,18 @@ import com.dhimandasgupta.composeaccount.data.defaultAccountPreferences
 import com.dhimandasgupta.composeaccount.ui.data.AllAccountItems
 import com.dhimandasgupta.composeaccount.ui.data.defaultAllAccountItems
 import com.dhimandasgupta.composeaccount.ui.data.toFullAccountProfile
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class AccountViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AccountViewModel @Inject constructor(
     private val accountPreferencesRepository: AccountPreferencesRepository
 ) : ViewModel() {
     private val ceh = CoroutineExceptionHandler { _, _ -> }

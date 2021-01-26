@@ -177,35 +177,38 @@ fun CreateAccountListForPortrait(
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
     LazyColumn {
-        items(items = allAccountItems.accountItems, itemContent = { accountItem ->
-            when (accountItem) {
-                is AccountProfileImage -> CreateAccountProfileImage(
-                    accountProfileImage = accountItem,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    onCameraClicked = onCameraClicked,
-                    onGalleryClicked = onGalleryClicked,
-                    onDeletePhoto = onDeletePhoto,
-                )
-                is AccountHeading -> CreateAccountProfileHeading(
-                    accountProfileHeading = accountItem,
-                )
-                is AccountProfileText -> CreateAccountProfileText(
-                    accountViewModel = accountViewModel,
-                    accountProfileText = accountItem,
-                )
-                is AccountProfileSwitch -> CreateAccountProfileSwitch(
-                    accountProfileSwitch = accountItem,
-                    accountViewModel = accountViewModel,
-                    onLocationRequested = onLocationRequested,
-                )
-                is AccountProfileLink -> CreateAccountProfileLink(
-                    accountProfileLink = accountItem,
-                    onRequestToOpenBrowser = onRequestToOpenBrowser
-                )
+        items(
+            items = allAccountItems.accountItems,
+            itemContent = { accountItem ->
+                when (accountItem) {
+                    is AccountProfileImage -> CreateAccountProfileImage(
+                        accountProfileImage = accountItem,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        onCameraClicked = onCameraClicked,
+                        onGalleryClicked = onGalleryClicked,
+                        onDeletePhoto = onDeletePhoto,
+                    )
+                    is AccountHeading -> CreateAccountProfileHeading(
+                        accountProfileHeading = accountItem,
+                    )
+                    is AccountProfileText -> CreateAccountProfileText(
+                        accountViewModel = accountViewModel,
+                        accountProfileText = accountItem,
+                    )
+                    is AccountProfileSwitch -> CreateAccountProfileSwitch(
+                        accountProfileSwitch = accountItem,
+                        accountViewModel = accountViewModel,
+                        onLocationRequested = onLocationRequested,
+                    )
+                    is AccountProfileLink -> CreateAccountProfileLink(
+                        accountProfileLink = accountItem,
+                        onRequestToOpenBrowser = onRequestToOpenBrowser
+                    )
+                }
             }
-        })
+        )
     }
 }
 
@@ -260,7 +263,8 @@ fun CreateAccountListForLandscape(
                             )
                             else -> {}
                         }
-                    })
+                    }
+                )
             }
         }
     } else {
@@ -397,7 +401,7 @@ fun CreateAccountProfileText(
         )
         Spacer(
             modifier =
-                Modifier.size(4.dp)
+            Modifier.size(4.dp)
         )
         Text(
             text = accountProfileText.value,
@@ -635,7 +639,7 @@ fun ShowNameUpdateDialog(
                 TextField(
                     value = textState.value,
                     textStyle = TextStyle(
-                      color = colors.onSurface,
+                        color = colors.onSurface,
                     ),
                     onValueChange = { textState.value = it },
                 )

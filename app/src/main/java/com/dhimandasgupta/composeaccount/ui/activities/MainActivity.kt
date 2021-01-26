@@ -103,16 +103,16 @@ class MainActivity : AppCompatActivity() {
         cropImage.unregister()
     }
 
-    private fun launchCamera() : Unit = askCameraPermission.launch(Manifest.permission.CAMERA)
+    private fun launchCamera(): Unit = askCameraPermission.launch(Manifest.permission.CAMERA)
 
-    private fun launchGallery() : Unit = selectPicture.launch("image/*")
+    private fun launchGallery(): Unit = selectPicture.launch("image/*")
 
     private fun deletePhoto() {
         accountViewModel.deleteProfileImage()
         deleteCacheDirectory()
     }
 
-    private fun launchLocationPermission() : Unit = askLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    private fun launchLocationPermission(): Unit = askLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
     private fun openExternalBrowser(url: String) = openLinkOnExternalApplication(url = url)
 
