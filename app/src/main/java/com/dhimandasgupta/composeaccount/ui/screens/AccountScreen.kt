@@ -1,6 +1,7 @@
 package com.dhimandasgupta.composeaccount.ui.screens
 
 import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.typography
@@ -38,6 +39,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.AmbientConfiguration
 import androidx.compose.ui.platform.AmbientContext
@@ -178,9 +181,9 @@ fun CreateAccountListForPortrait(
 ) {
     LazyColumn {
         items(
-            items = allAccountItems.accountItems,
-            itemContent = { accountItem ->
-                when (accountItem) {
+            count = allAccountItems.accountItems.size,
+            itemContent = { index ->
+                when (val accountItem = allAccountItems.accountItems[index]) {
                     is AccountProfileImage -> CreateAccountProfileImage(
                         accountProfileImage = accountItem,
                         modifier = Modifier
@@ -242,9 +245,9 @@ fun CreateAccountListForLandscape(
             )
             LazyColumn {
                 items(
-                    items = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size),
-                    itemContent = { accountItem ->
-                        when (accountItem) {
+                    count = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size).size,
+                    itemContent = { index ->
+                        when (val accountItem = allAccountItems.accountItems[index]) {
                             is AccountHeading -> CreateAccountProfileHeading(
                                 accountProfileHeading = accountItem,
                             )
@@ -309,37 +312,40 @@ fun CreateAccountProfileImage(
                     directory,
                     accountProfileImage.profileImage
                 ),
+                contentDescription = "Profile Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(156.dp)
                     .clip(CircleShape),
             )
         } else {
-            Icon(
-                imageVector = Icons.Outlined.Face.copy(
-                    defaultWidth = 156.dp,
-                    defaultHeight = 156.dp
-                ),
-                tint = colors.onSurface,
+            Image(
+                imageVector = Icons.Outlined.Face,
+                contentDescription = "Profile Image",
+                contentScale = ContentScale.FillBounds,
+                colorFilter = ColorFilter(color = colors.surface, blendMode = BlendMode.Xor),
                 modifier = Modifier
                     .size(156.dp)
-                    .clip(CircleShape),
+                    .clip(CircleShape)
+                    .background(color = colors.onSurface),
             )
         }
 
-        Icon(
-            imageVector = Icons.Filled.Face.copy(
-                defaultWidth = 48.dp,
-                defaultHeight = 48.dp
-            ),
-            tint = colors.onSurface,
+        IconButton(
+            onClick = { openDialog.value = true },
             modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(color = colors.surface)
                 .align(alignment = Alignment.BottomEnd)
-                .preferredSize(48.dp)
-                .clickable(
-                    onClick = { openDialog.value = true }
-                )
-        )
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Face,
+                contentDescription = "Select Profile",
+                tint = colors.onSurface,
+                modifier = Modifier.fillMaxSize(1f)
+            )
+        }
     }
 
     if (openDialog.value) {
@@ -629,12 +635,10 @@ fun ShowNameUpdateDialog(
                     maxLines = 1,
                     color = colors.onSurface,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .padding(4.dp),
+                    modifier = Modifier.padding(4.dp),
                 )
                 Spacer(
-                    modifier = Modifier
-                        .size(8.dp),
+                    modifier = Modifier.size(8.dp),
                 )
                 TextField(
                     value = textState.value,
@@ -644,13 +648,11 @@ fun ShowNameUpdateDialog(
                     onValueChange = { textState.value = it },
                 )
                 Spacer(
-                    modifier = Modifier
-                        .size(8.dp),
+                    modifier = Modifier.size(8.dp),
                 )
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
                         text = "Cancel",
