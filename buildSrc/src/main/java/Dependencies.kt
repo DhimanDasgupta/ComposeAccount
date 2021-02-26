@@ -65,15 +65,12 @@ object Deps {
         private const val androidXCoreVersion = "1.3.2"
         private const val materialVersion = "1.3.0"
         private const val androidAppCompatVersion = "1.2.0"
-        private const val activityKtxVersion = "1.3.0"
         private const val activityComposeVersion = "1.3.0-alpha02"
 
         const val coreKtx = "androidx.core:core-ktx:$androidXCoreVersion"
         const val appcompat = "androidx.appcompat:appcompat:$androidAppCompatVersion"
-        // const val activity = "androidx.activity:activity:$activityKtxVersion"
-        // const val activityKtx = "androidx.activity:activity-ktx:$activityKtxVersion"
         const val material = "com.google.android.material:material:$materialVersion"
-        // const val activityCompose = "androidx.activity:activity-compose:$activityComposeVersion"
+        const val activityCompose = "androidx.activity:activity-compose:$activityComposeVersion"
 
         object Compose {
             private const val version = "1.0.0-beta01"
@@ -100,6 +97,7 @@ object Deps {
             private const val version = "2.3.0"
 
             const val liveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
+            const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
         }
 
         object DataStore {
