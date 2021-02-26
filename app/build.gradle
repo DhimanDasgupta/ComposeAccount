@@ -45,47 +45,48 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion Deps.AndroidX.Compose.version
-        kotlinCompilerVersion Deps.Kotlin.compilerVersion
+        kotlinCompilerVersion Deps.AndroidX.Compose.version
     }
 }
 
 dependencies {
     implementation Deps.Kotlin.stdLib
-    implementation Deps.AndroidX.coreKtx
+
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
+    implementation 'androidx.activity:activity-compose:1.3.0-alpha02'
+
+    /*implementation Deps.AndroidX.coreKtx
     implementation Deps.AndroidX.appcompat
-    implementation Deps.AndroidX.activityKtx
-    implementation Deps.AndroidX.material
+    //implementation Deps.AndroidX.activity
+    //implementation Deps.AndroidX.activityKtx
+    implementation Deps.AndroidX.material*/
 
     // Compose
+    // implementation Deps.AndroidX.activityCompose
     implementation Deps.AndroidX.Compose.ui
     implementation Deps.AndroidX.Compose.runtime
     implementation Deps.AndroidX.Compose.foundation
     implementation Deps.AndroidX.Compose.material
-    // implementation Deps.AndroidX.Compose.composer
-    // implementation Deps.AndroidX.Compose.tooling
-    implementation Deps.AndroidX.Compose.savedInstanceState
+    implementation Deps.AndroidX.Compose.tooling
     implementation Deps.AndroidX.Compose.animationCore
     implementation Deps.AndroidX.Compose.animation
     implementation Deps.AndroidX.Compose.liveDataRuntime
+    implementation Deps.AndroidX.Compose.composeViewModel
 
-    // Microsoft Duo
-    implementation Deps.MicrosoftDuo.duoCore
-    implementation Deps.MicrosoftDuo.duoLayout
-
-    // Coil image for Compose
-    implementation Deps.AndroidX.Accompanist.accompanistCoil
-
-    // ViewModel
-    implementation Deps.AndroidX.Lifecycle.viewModelKtx
-    implementation Deps.AndroidX.Lifecycle.runtimeKtx
-
-    // LiveData
-    implementation Deps.AndroidX.LiveData.liveDataKtx
+    // LifeCycle
+    implementation Deps.AndroidX.Lifecycle.liveDataKtx
 
     // Hilt
     implementation Deps.Hilt.hiltAndroid
     kapt Deps.Hilt.kapt
     implementation Deps.HiltAndroid.viewModel
+
+    // Coil image for Compose
+    implementation Deps.AndroidX.Accompanist.accompanistCoil
+
 
     // Protocol Buffer
     implementation Deps.ProtocolBuffer.protocolBufferLite
@@ -100,13 +101,6 @@ dependencies {
 
 kapt {
     correctErrorTypes true
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "11"
-        freeCompilerArgs += ["-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check"]
-    }
 }
 
 protobuf {

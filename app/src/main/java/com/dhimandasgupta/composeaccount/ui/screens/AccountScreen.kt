@@ -42,8 +42,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.AmbientConfiguration
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -146,7 +146,7 @@ fun CreateAccountList(
     onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
-    when (AmbientConfiguration.current.orientation) {
+    when (LocalConfiguration.current.orientation) {
         ORIENTATION_LANDSCAPE -> CreateAccountListForLandscape(
             allAccountItems = allAccountItems,
             accountViewModel = accountViewModel,
@@ -184,15 +184,23 @@ fun CreateAccountListForPortrait(
             count = allAccountItems.accountItems.size,
             itemContent = { index ->
                 when (val accountItem = allAccountItems.accountItems[index]) {
-                    is AccountProfileImage -> CreateAccountProfileImage(
-                        accountProfileImage = accountItem,
+                    is AccountProfileImage -> Box(
                         modifier = Modifier
+                            .padding(16.dp)
                             .fillMaxWidth()
                             .wrapContentHeight(),
-                        onCameraClicked = onCameraClicked,
-                        onGalleryClicked = onGalleryClicked,
-                        onDeletePhoto = onDeletePhoto,
-                    )
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CreateAccountProfileImage(
+                            accountProfileImage = accountItem,
+                            modifier = Modifier
+                                .wrapContentWidth()
+                                .wrapContentHeight(),
+                            onCameraClicked = onCameraClicked,
+                            onGalleryClicked = onGalleryClicked,
+                            onDeletePhoto = onDeletePhoto,
+                        )
+                    }
                     is AccountHeading -> CreateAccountProfileHeading(
                         accountProfileHeading = accountItem,
                     )
@@ -232,17 +240,24 @@ fun CreateAccountListForLandscape(
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
-            CreateAccountProfileImage(
-                accountProfileImage = allAccountItems.accountItems[0] as AccountProfileImage,
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth(0.35f)
+                    .fillMaxWidth(0.3f)
                     .fillMaxHeight(),
-                onCameraClicked = onCameraClicked,
-                onGalleryClicked = onGalleryClicked,
-                onDeletePhoto = onDeletePhoto,
-            )
+                contentAlignment = Alignment.Center
+            ) {
+                CreateAccountProfileImage(
+                    accountProfileImage = allAccountItems.accountItems[0] as AccountProfileImage,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .wrapContentHeight(),
+                    onCameraClicked = onCameraClicked,
+                    onGalleryClicked = onGalleryClicked,
+                    onDeletePhoto = onDeletePhoto,
+                )
+            }
             LazyColumn {
                 items(
                     count = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size).size,
@@ -291,7 +306,7 @@ fun CreateAccountProfileImage(
     onDeletePhoto: () -> Unit,
     modifier: Modifier
 ) {
-    val directory = File(AmbientContext.current.cacheDir, "Camera")
+    val directory = File(LocalContext.current.cacheDir, "Camera")
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -323,7 +338,7 @@ fun CreateAccountProfileImage(
                 imageVector = Icons.Outlined.Face,
                 contentDescription = "Profile Image",
                 contentScale = ContentScale.FillBounds,
-                colorFilter = ColorFilter(color = colors.surface, blendMode = BlendMode.Xor),
+                colorFilter = ColorFilter.tint(color = colors.surface, blendMode = BlendMode.Xor),
                 modifier = Modifier
                     .size(156.dp)
                     .clip(CircleShape)

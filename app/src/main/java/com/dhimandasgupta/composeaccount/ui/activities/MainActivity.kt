@@ -3,11 +3,11 @@ package com.dhimandasgupta.composeaccount.ui.activities
 import android.Manifest
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.setContent
 import com.dhimandasgupta.composeaccount.ext.copyToCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.deleteCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.getCameraFileUri
