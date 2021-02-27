@@ -12,7 +12,7 @@ import com.dhimandasgupta.composeaccount.ext.copyToCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.deleteCacheDirectory
 import com.dhimandasgupta.composeaccount.ext.getCameraFileUri
 import com.dhimandasgupta.composeaccount.ext.isLocationPermissionGranted
-import com.dhimandasgupta.composeaccount.ext.openLinkOnExternalApplication
+import com.dhimandasgupta.composeaccount.ext.openAppOrBrowser
 import com.dhimandasgupta.composeaccount.ext.openSettings
 import com.dhimandasgupta.composeaccount.ui.contracts.CropActivityContract
 import com.dhimandasgupta.composeaccount.ui.screens.AccountRoot
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchLocationPermission(): Unit = askLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
-    private fun openExternalBrowser(url: String) = openLinkOnExternalApplication(url = url)
+    private fun openExternalBrowser(url: String) = openAppOrBrowser(url = url)
 
     private fun showSnackBar(
         text: String,
