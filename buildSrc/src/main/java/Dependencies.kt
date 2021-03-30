@@ -15,17 +15,17 @@ object Versions {
 }
 
 object Deps {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha08"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha12"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Kotlin.version}"
     const val hiltGradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:${Hilt.version}"
 
     object Kotlin {
-        const val version = "1.4.30"
+        const val version = "1.4.31"
         const val stdLib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
         const val common = "org.jetbrains.kotlin:kotlin-stdlib-common:$version"
 
-        // const val compilerVersion = "1.4.30"
+        // const val compilerVersion = "1.4.31"
 
         object Coroutine {
             private const val version = "1.4.2"
@@ -64,8 +64,8 @@ object Deps {
     object AndroidX {
         private const val androidXCoreVersion = "1.3.2"
         private const val materialVersion = "1.3.0"
-        private const val androidAppCompatVersion = "1.2.0"
-        private const val activityComposeVersion = "1.3.0-alpha02"
+        private const val androidAppCompatVersion = "1.3.0-rc01"
+        private const val activityComposeVersion = "1.3.0-alpha05"
 
         const val coreKtx = "androidx.core:core-ktx:$androidXCoreVersion"
         const val appcompat = "androidx.appcompat:appcompat:$androidAppCompatVersion"
@@ -73,7 +73,7 @@ object Deps {
         const val activityCompose = "androidx.activity:activity-compose:$activityComposeVersion"
 
         object Compose {
-            private const val version = "1.0.0-beta01"
+            private const val version = "1.0.0-beta03"
 
             const val ui = "androidx.compose.ui:ui:$version"
             const val runtime = "androidx.compose.runtime:runtime:$version"
@@ -87,10 +87,10 @@ object Deps {
         }
 
         object Accompanist {
-            private const val version = "0.6.0"
+            private const val version = "0.7.0"
 
-            const val accompanistCoil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
-            const val accompanistMdc = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
+            const val accompanistCoil = "com.google.accompanist:accompanist-coil:$version"
+            const val accompanistMdc = "com.google.accompanist:accompanist-mdc-theme:$version"
         }
 
         object Lifecycle {

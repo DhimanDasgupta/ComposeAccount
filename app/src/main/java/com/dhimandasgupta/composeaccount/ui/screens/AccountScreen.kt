@@ -62,7 +62,7 @@ import com.dhimandasgupta.composeaccount.ui.data.AccountProfileSwitch
 import com.dhimandasgupta.composeaccount.ui.data.AccountProfileText
 import com.dhimandasgupta.composeaccount.ui.data.AllAccountItems
 import com.dhimandasgupta.composeaccount.viewmodel.AccountViewModel
-import dev.chrisbanes.accompanist.coil.CoilImage
+import com.google.accompanist.coil.CoilImage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
 
@@ -234,7 +234,8 @@ fun CreateAccountListForLandscape(
     onLocationRequested: () -> Unit,
     onRequestToOpenBrowser: (String) -> Unit,
 ) {
-    val firstItemIsProfileImage = allAccountItems.accountItems.isNotEmpty() && allAccountItems.accountItems[0] is AccountProfileImage
+    val firstItemIsProfileImage =
+        allAccountItems.accountItems.isNotEmpty() && allAccountItems.accountItems[0] is AccountProfileImage
 
     if (firstItemIsProfileImage) {
         Row(
@@ -260,7 +261,10 @@ fun CreateAccountListForLandscape(
             }
             LazyColumn {
                 items(
-                    count = allAccountItems.accountItems.subList(1, allAccountItems.accountItems.size).size,
+                    count = allAccountItems.accountItems.subList(
+                        1,
+                        allAccountItems.accountItems.size
+                    ).size,
                     itemContent = { index ->
                         when (val accountItem = allAccountItems.accountItems[index]) {
                             is AccountHeading -> CreateAccountProfileHeading(
@@ -279,7 +283,8 @@ fun CreateAccountListForLandscape(
                                 accountProfileLink = accountItem,
                                 onRequestToOpenBrowser = onRequestToOpenBrowser,
                             )
-                            else -> {}
+                            else -> {
+                            }
                         }
                     }
                 )
@@ -436,7 +441,8 @@ fun CreateAccountProfileText(
                     onClick = {
                         when (accountProfileText.id) {
                             ACCOUNT_TEXT_NAME.hashCode() -> openNameChangeDialog.value = true
-                            else -> { }
+                            else -> {
+                            }
                         }
                     }
                 )
@@ -454,7 +460,11 @@ fun CreateAccountProfileSwitch(
     val openPermissionOffRequestDialog = remember { mutableStateOf(false) }
 
     if (openPermissionOffRequestDialog.value) {
-        OnLocationSwitchOffRequest(onDismissRequest = { openPermissionOffRequestDialog.value = false })
+        OnLocationSwitchOffRequest(
+            onDismissRequest = {
+                openPermissionOffRequestDialog.value = false
+            }
+        )
     }
 
     Row(
@@ -493,7 +503,8 @@ fun CreateAccountProfileSwitch(
                         accountViewModel.setAsyncToggle(checked = checked)
                     }
                     ACCOUNT_SWITCH_LOCATION.hashCode() -> {
-                        if (checked) onLocationRequested.invoke() else openPermissionOffRequestDialog.value = true
+                        if (checked) onLocationRequested.invoke() else openPermissionOffRequestDialog.value =
+                            true
                     }
                     ACCOUNT_SWITCH_DATA_USAGE.hashCode() -> {
                         accountViewModel.setSyncToggle(checked = checked)

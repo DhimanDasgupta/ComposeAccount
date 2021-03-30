@@ -4,7 +4,12 @@ import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.*
+import android.content.Intent.ACTION_VIEW
+import android.content.Intent.CATEGORY_BROWSABLE
+import android.content.Intent.CATEGORY_DEFAULT
+import android.content.Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -45,7 +50,6 @@ private fun Context.openBrowser(url: String) {
         startActivity(i)
     } ?: Toast.makeText(this, "Looks like you don't have browser", Toast.LENGTH_SHORT).show()
 }
-
 
 fun Context.isLocationPermissionGranted() =
     PermissionChecker.checkCallingOrSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED &&
